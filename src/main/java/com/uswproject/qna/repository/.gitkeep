@@ -1,0 +1,5 @@
+- Service계층에서 Repository를 불러 사용
+  Controller → Service → Repository → DB
+
+- 데이터베이스에 CRUD요청을 보내는 곳
+- DB 검색 / 조회 / 저장 / 삭제 기능 제공
