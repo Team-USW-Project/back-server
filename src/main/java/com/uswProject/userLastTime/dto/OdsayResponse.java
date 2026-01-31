@@ -8,21 +8,18 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@ToString
 public class OdsayResponse {
 
     private Result result;
 
     @Getter
     @NoArgsConstructor
-    @ToString
     public static class Result {
         private List<Path> path;
     }
 
     @Getter
     @NoArgsConstructor
-    @ToString
     public static class Path {
         private int pathType; // 이동 수단 종류
         private Info info;
@@ -40,7 +37,6 @@ public class OdsayResponse {
 
     @Getter
     @NoArgsConstructor
-    @ToString
     public static class SubPath {
 
         private double distance; // 이동 거리
