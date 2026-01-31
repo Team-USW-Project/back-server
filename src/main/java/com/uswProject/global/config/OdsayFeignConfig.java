@@ -22,9 +22,7 @@ public class OdsayFeignConfig {
     @Bean
     public RequestInterceptor odsayRequestInterceptor() {
         return requestTemplate -> {
-            System.out.println(">>> Sending API Key: " + apiKey);
             String encodedKey = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
-            System.out.println(">>> Encoded API Key: " + encodedKey);
             requestTemplate.query("apiKey", encodedKey);
             };
         }
