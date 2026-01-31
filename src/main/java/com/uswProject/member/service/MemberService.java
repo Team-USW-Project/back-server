@@ -1,6 +1,6 @@
-package com.uswproject.member.service;
+package com.uswProject.member.service;
 
-import com.uswproject.member.repository.MemberRepository;
+import com.uswProject.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

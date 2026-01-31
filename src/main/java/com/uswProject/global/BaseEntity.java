@@ -1,4 +1,4 @@
-package com.uswproject.global;
+package com.uswProject.global;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
