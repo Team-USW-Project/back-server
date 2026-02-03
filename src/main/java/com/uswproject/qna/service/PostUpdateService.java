@@ -19,7 +19,7 @@ public class PostUpdateService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + postId));
 
         // 작성자 검증
-        if (!post.getWriterMemberId().equals(memberId)) {
+        if (!post.getMemberId().equals(memberId)) {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
 

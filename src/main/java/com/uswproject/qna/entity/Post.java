@@ -21,7 +21,7 @@ public class Post extends BaseEntity {
 
     // 작성자: member 모듈 없으니 일단 id만 저장
     @Column(nullable = false)
-    private Long writerMemberId;
+    private Long memberId;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -30,8 +30,8 @@ public class Post extends BaseEntity {
     private String content;
 
 
-    public Post(Long writerMemberId, String title, String content) {
-        this.writerMemberId = writerMemberId;
+    public Post(Long memberId, String title, String content) {
+        this.memberId = memberId;
         this.title = title;
         this.content = content;
     }

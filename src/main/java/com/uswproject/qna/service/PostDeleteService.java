@@ -22,7 +22,7 @@ public class PostDeleteService {
                 );
 
         // 2. 작성자 검증
-        if (!post.getWriterMemberId().equals(memberId)) {
+        if (!post.getMemberId().equals(memberId)) {
             throw new IllegalStateException("삭제 권한이 없습니다.");
         }
 
