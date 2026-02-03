@@ -1,0 +1,28 @@
+## 멤버 패키지의 멤버엔티티와 겹쳐서 삭제함
+
+package com.uswproject.group.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "members")
+public class MemberEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    // 회원 PK
+
+    @Column(nullable = false)
+    private String name;
+    // 회원 이름
+
+    protected MemberEntity() {}
+
+    public MemberEntity(String name) {
+        this.name = name;
+    }
+
+    public Long getId() { return id; }
+    public String getName() { return name; }
+}
