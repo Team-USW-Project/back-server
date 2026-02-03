@@ -1,6 +1,6 @@
-package com.uswproject.member.entity;
+package com.uswProject.member.entity;
 
-import com.uswproject.global.BaseEntity;
+import com.uswProject.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

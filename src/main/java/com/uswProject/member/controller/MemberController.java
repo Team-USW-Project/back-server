@@ -1,4 +1,4 @@
-package com.uswproject.member.controller;
+package com.uswProject.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
