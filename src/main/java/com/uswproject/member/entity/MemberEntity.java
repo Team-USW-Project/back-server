@@ -15,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Member extends BaseEntity {
+@Table(name = "member")
+public class MemberEntity extends BaseEntity {
 
     /**
      * @Id(PK)
@@ -40,7 +41,7 @@ public class Member extends BaseEntity {
      * 생성자를 private로 닫아 외부에서 new Member()를 통한 생성 금지
      * (ID는 DB에서 만들어주기에 제외)
      */
-    private Member(String email, String name, String password) {
+    private MemberEntity(String email, String name, String password) {
         this.email = email;
         this.name = name;
         this.password = password;
@@ -50,8 +51,8 @@ public class Member extends BaseEntity {
      * 정적 팩토리 메서드
      * 외부에서는 오직 이 메서드를 통해서만 객체 생성이 가능하다.
      */
-    public static Member create(String email, String name, String password) {
-        return new Member(email, name, password);
+    public static MemberEntity create(String email, String name, String password) {
+        return new MemberEntity(email, name, password);
     }
 
 }

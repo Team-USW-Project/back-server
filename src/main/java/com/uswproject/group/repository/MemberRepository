@@ -1,0 +1,10 @@
+에러
+
+The bean 'memberRepository' ... could not be registered.
+A bean with that name has already been defined in
+
+com.uswproject.group.repository.MemberRepository
+com.uswproject.member.repository.MemberRepository
+
+-> 같은 이름의 Repository가 두 개 있음 (member패키지와 겹침)
+
