@@ -1,4 +1,4 @@
-package com.uswproject;
+package com.uswProject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
