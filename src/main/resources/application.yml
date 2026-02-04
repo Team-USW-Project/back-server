@@ -37,8 +37,6 @@ odsay:
     key: ${ODSAY_API_KEY}
     base-url: https://api.odsay.com/v1/api
 
-
-
 logging:
   level:
     # 패키지 경로는 본인 프로젝트에 맞게 수정
