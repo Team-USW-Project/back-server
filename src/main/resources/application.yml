@@ -2,7 +2,7 @@ server:
   port: 8080
   servlet:
     context-path: /api/${api.version}
-    name: uswproject
+    name: uswProject
 
 api:
   version: v1
@@ -32,4 +32,12 @@ spring:
     open-in-view: false
     show-sql: false
 
+odsay:
+  api:
+    key: ${ODSAY_API_KEY}
+    base-url: https://api.odsay.com/v1/api
 
+logging:
+  level:
+    # 패키지 경로는 본인 프로젝트에 맞게 수정
+    com.uswProject.client.OdsayClient: DEBUG
