@@ -1,31 +1,30 @@
 package com.uswProject.route.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class RoutePlan {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "routePlan_id", nullable = false)
-    private Long id;
+    private final Place origin;
+    private final Place destination;
 
-    private String location;
+    private final Duration totalduration;
+    private final int totalDistanceMeters;
+    private final int transferCount;
 
-    private LocalDateTime totalDurationMin;
+    private final List<Segment> segments;
 
-    private double totalDistanceM;
-
-    private int transferCount;
-
-    private List<Segment> segmentList;
+    public RoutePlan(Place origin, Place destination, Duration totalduration, int totalDistanceMeters,
+                     int transferCount, List<Segment> segments) {
+        this.origin = origin;
+        this.destination = destination;
+        this.totalduration = totalduration;
+        this.totalDistanceMeters = totalDistanceMeters;
+        this.transferCount = transferCount;
+        this.segments = Collections.unmodifiableList(segments);
+    }
 
 }

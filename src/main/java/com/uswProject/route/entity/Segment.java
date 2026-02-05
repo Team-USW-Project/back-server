@@ -1,30 +1,34 @@
 package com.uswProject.route.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import com.uswProject.route.entity.enums.SegmentMode;
+import java.time.Duration;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class Segment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "segment_id", nullable = false)
-    private Long id;
+    private final SegmentMode mode;
+    private final Place from;
+    private final Place to;
 
-    private SegmentMode mode;
+    private final Duration duration;
+    private final int distanceMeters;
 
-    private Place from;
+    private final TransitLine line;
 
-    private Place to;
+    public Segment(SegmentMode mode, Place from, Place to, Duration duration, int distanceMeters, TransitLine line) {
+        this.mode = mode;
+        this.from = from;
+        this.to = to;
+        this.duration = duration;
+        this.distanceMeters = distanceMeters;
+        this.line = line;
+    }
+    public boolean isTransit() {
+        return mode == SegmentMode.BUS || mode == SegmentMode.SUBWAY;
+    }
 
-    private LocalDateTime durationMin;
-
-    private double distanceM;
-
+    public boolean isSubway() {
+        return mode == SegmentMode.SUBWAY;
+    }
 }
