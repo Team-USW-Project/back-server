@@ -3,7 +3,6 @@ package com.uswproject.qna.controller;
 import com.uswproject.qna.dto.PostCreateRequestDto;
 import com.uswproject.qna.dto.PostUpdateRequestDto;
 import com.uswproject.qna.service.PostService;
-import com.uswproject.qna.service.PostUpdateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
