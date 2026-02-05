@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ODsaySegment {
+public class Segment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

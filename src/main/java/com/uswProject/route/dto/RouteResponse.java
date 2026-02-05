@@ -2,7 +2,7 @@ package com.uswProject.route.dto;
 
 import java.util.List;
 
-public class ODsayResponse {
+public class RouteResponse {
     private Result result;
 
     public class Result {

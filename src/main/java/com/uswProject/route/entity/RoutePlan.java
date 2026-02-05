@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ODsayRoutePlan {
+public class RoutePlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +26,6 @@ public class ODsayRoutePlan {
 
     private int transferCount;
 
-    private List<ODsaySegment> segmentList;
+    private List<Segment> segmentList;
 
 }
