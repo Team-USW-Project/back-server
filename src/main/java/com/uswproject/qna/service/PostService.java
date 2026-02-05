@@ -1,12 +1,17 @@
 package com.uswproject.qna.service;
 
 import com.uswproject.qna.dto.PostCreateRequestDto;
+import com.uswproject.qna.dto.PostDetailResponseDto;
+import com.uswproject.qna.dto.PostListItemResponseDto;
 import com.uswproject.qna.dto.PostUpdateRequestDto;
 import com.uswproject.qna.entity.Post;
 import com.uswproject.qna.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +58,34 @@ public class PostService {
 
         post.update(request.getTitle(), request.getContent());
 
+    }
+
+    //게시글 조회
+
+    @Transactional(readOnly = true)
+    public List<PostListItemResponseDto> getPosts(Pageable pageable) {
+
+
+        return postRepository.findAllByDeletedFalse(pageable)
+                .getContent()
+                .stream()
+                .map(post -> new PostListItemResponseDto(post))
+                .toList();
+
+    }
+    public PostDetailResponseDto getPost(Long postId) {
+
+        Post post = postRepository.findByIdAndDeletedFalse(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다. id=" + postId));
+
+        return new PostDetailResponseDto(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getMemberId(),
+                post.getCreatedAt(),
+                post.getModifiedAt()
+        );
     }
 
 }
