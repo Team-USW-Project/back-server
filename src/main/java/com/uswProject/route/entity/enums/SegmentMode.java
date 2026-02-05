@@ -1,4 +1,4 @@
-package com.uswProject.route.entity;
+package com.uswProject.route.entity.enums;
 
 import lombok.Getter;
 
