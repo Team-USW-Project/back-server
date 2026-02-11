@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum SegmentMode {
-    WALK, BUS, SUBWAY;
+    SUBWAY, BUS, WALK;
 }
