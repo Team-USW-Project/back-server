@@ -1,16 +1,14 @@
 package com.uswProject.userLastTime.controller;
 
 import com.uswProject.global.success.SuccessResponse;
+import com.uswProject.userLastTime.dto.LastTimeRequest;
 import com.uswProject.userLastTime.dto.OdsayResponse;
 import com.uswProject.userLastTime.exception.LastTimeSuccessCode;
 import com.uswProject.userLastTime.service.UserLastTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,8 +32,24 @@ public class UserLastTimeController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(SuccessResponse.of(
-                        LastTimeSuccessCode.Last_TIME_SUCCESS_SEARCH_ROUTE,
+                        LastTimeSuccessCode.LAST_TIME_ROUTE_SUCCESS_SEARCH_ROUTE,
                         routes
                 ));
     }
+
+    @PostMapping
+    public ResponseEntity<SuccessResponse> getLastTime(
+            @RequestBody LastTimeRequest request
+    ) {
+        String lastTime = userLastTimeService.LastTime(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(SuccessResponse.of(
+                        LastTimeSuccessCode.LAST_TIME_SUCCESS_CODE,
+                        lastTime
+                ));
+    }
+
+
 }

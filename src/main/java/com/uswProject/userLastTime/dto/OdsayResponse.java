@@ -2,7 +2,6 @@ package com.uswProject.userLastTime.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 
@@ -31,7 +30,6 @@ public class OdsayResponse {
     public static class Info {
         private String firstStartStation; // 최초 출발역
         private String lastEndStation; // 최종 도착역
-        private int sectionTime; // 이동 시간
         private int totalTime; // 총 이동시간
     }
 
@@ -42,6 +40,18 @@ public class OdsayResponse {
         private double distance; // 이동 거리
         private String startName; // 승차역
         private String endName; // 하차역
+        private int sectionTime; // 이동 시간
+        private int startID; // 출발 정류장 ID (지하철 버스 포함)
+        private int endID;
+        private int trafficType;
+        private int wayCode;
+        private List<Lane> lane;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class Lane {
+        private int busID;
     }
 
 
