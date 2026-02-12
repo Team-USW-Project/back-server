@@ -2,7 +2,9 @@ package com.uswProject.userLastTime.client;
 
 import com.uswProject.global.config.OdsayFeignConfig;
 import com.uswProject.global.config.OpenFeignConfig;
+import com.uswProject.userLastTime.dto.BusResponse;
 import com.uswProject.userLastTime.dto.OdsayResponse;
+import com.uswProject.userLastTime.dto.SubwayResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,5 +27,16 @@ public interface SearchRouteOpenFeign {
             @RequestParam("EX") double endX,
             @RequestParam("EY") double endY
     );
+
+    @GetMapping("/busLaneDetail")
+    BusResponse searchBus(
+            @RequestParam("busID") int busID
+    );
+
+    @GetMapping("/searchSubwaySchedule")
+    SubwayResponse searchSubway(
+            @RequestParam("stationID") int stationID
+    );
+
 
 }
