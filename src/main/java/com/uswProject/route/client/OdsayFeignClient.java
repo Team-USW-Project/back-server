@@ -1,5 +1,6 @@
 package com.uswProject.route.client;
 
+import com.uswProject.route.dto.odsay.OdsaySearchResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -7,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "odsayClient", url = "${odysay.api.base-url}", configuration = OdsayFeignConfig.class)
 public interface OdsayFeignClient {
 
-    @GetMapping("/searchPubTransPath")
-    Object getSearchPubTransPath(
+    @GetMapping("/searchPubTransPathT")
+    OdsaySearchResponse getSearchPubTransPathT(
             @RequestParam("SX") double startX,
             @RequestParam("SY") double startY,
             @RequestParam("EX") double endX,
