@@ -1,22 +1,19 @@
 package com.uswProject.route.service;
 
-import com.uswProject.route.client.ODsayClient;
+import com.uswProject.route.client.OdsayFeignClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RouteService {
 
-    private final ODsayClient odsayClient;
+    private final OdsayFeignClient odsayClient;
 
-    @Value("${odsay.api.key}")
-    private String apiKey;
-
-    public RouteService(ODsayClient odsayClient) {
+    public RouteService(OdsayFeignClient odsayClient) {
         this.odsayClient = odsayClient;
     }
 
-    public Object getRoute(String sx, String sy, String ex, String ey) {
-        return odsayClient.getSearchPubTransPath(sx, sy, ex, ey, apiKey);
+    public Object getRoute(double sx, double sy, double ex, double ey, int opt, int searchType, int searchPathType) {
+        return odsayClient.getSearchPubTransPath(sx, sy, ex, ey, opt, searchType, searchPathType);
     }
 }
