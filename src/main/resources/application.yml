@@ -36,6 +36,9 @@ odsay:
   api:
     key: ${ODSAY_API_KEY}
     base-url: https://api.odsay.com/v1/api
+    lang: 0
+    output: "json"
+    opt: 0
 
 logging:
   level:
