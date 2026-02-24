@@ -6,7 +6,13 @@ import java.time.LocalDateTime;
 import com.uswproject.member.entity.MemberEntity;
 
 @Entity
-@Table(name = "group_members")
+@Table(
+        name = "group_members",
+        // 유니크 제약 : 코드 실수호 중복 인서트 하려 해도 디비가 막아줌
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_group_member", columnNames = {"group_id", "member_id"})
+        }
+)
 public class GroupMemberEntity {
 
     @Id
@@ -40,6 +46,7 @@ public class GroupMemberEntity {
         this.joinedAt = LocalDateTime.now();
     }
 
+    public GroupEntity getGroup() { return group; }
     public MemberEntity getMember() { return member; }
     public GroupRole getRole() { return role; }
 }

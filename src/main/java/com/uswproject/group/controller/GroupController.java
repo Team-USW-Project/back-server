@@ -1,7 +1,10 @@
 package com.uswproject.group.controller;
 
 import com.uswproject.group.dto.request.GroupCreateRequest;
+import com.uswproject.group.dto.request.GroupJoinRequest;
+import com.uswproject.group.dto.response.GroupCreateResponse;
 import com.uswproject.group.dto.response.GroupDetailResponse;
+import com.uswproject.group.dto.response.GroupJoinResponse;
 import com.uswproject.group.dto.response.GroupListResponse;
 import com.uswproject.group.entity.GroupEntity;
 import com.uswproject.group.service.GroupService;
@@ -20,8 +23,9 @@ public class GroupController {
     }
 
     // 그룹 생성
+    // 2주차: 생성 시 inviteCode 발급해서 같이 반환
     @PostMapping
-    public Long createGroup(@RequestBody GroupCreateRequest request) {
+    public GroupCreateResponse createGroup(@RequestBody GroupCreateRequest request) {
 
         return groupService.createGroup(
                 request.getName(),
@@ -39,5 +43,17 @@ public class GroupController {
     @GetMapping
     public List<GroupListResponse> getGroups() {
         return groupService.getGroupList();
+    }
+
+    /**
+     * 그룹 가입 API
+     * POST /groups/join
+     */
+    @PostMapping("/join")
+    public GroupJoinResponse joinGroup(@RequestBody GroupJoinRequest request) {
+        return groupService.joinGroup(
+                request.getInviteCode(),
+                request.getMemberId()
+        );
     }
 }

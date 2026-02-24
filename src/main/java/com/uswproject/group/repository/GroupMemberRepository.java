@@ -10,4 +10,7 @@ public interface GroupMemberRepository
 
     List<GroupMemberEntity> findByGroupId(Long groupId);
     // findByGroupId : 이 그룹에 속한 멤버 전부 가져오기
+
+    // 중복 가입 방지 핵심 메서드
+    boolean existsByGroupIdAndMemberId(Long groupId, Long memberId);
 }
