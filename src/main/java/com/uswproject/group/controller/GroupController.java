@@ -2,6 +2,7 @@ package com.uswproject.group.controller;
 
 import com.uswproject.group.dto.request.GroupCreateRequest;
 import com.uswproject.group.dto.response.GroupDetailResponse;
+import com.uswproject.group.dto.response.GroupListResponse;
 import com.uswproject.group.entity.GroupEntity;
 import com.uswproject.group.service.GroupService;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class GroupController {
 
     // 그룹 목록 조회
     @GetMapping
-    public List<GroupEntity> getGroups() {
+    public List<GroupListResponse> getGroups() {
         return groupService.getGroupList();
     }
 }

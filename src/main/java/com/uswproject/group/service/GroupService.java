@@ -1,6 +1,7 @@
 package com.uswproject.group.service;
 
 import com.uswproject.group.dto.response.GroupDetailResponse;
+import com.uswproject.group.dto.response.GroupListResponse;
 import com.uswproject.group.entity.*;
 import com.uswproject.group.repository.GroupMemberRepository;
 import com.uswproject.group.repository.GroupRepository;
@@ -91,8 +92,17 @@ public class GroupService {
 
     /**
      * 그룹 목록 조회
+     * id, name만 DTO로 변환해 반환
      */
-    public List<GroupEntity> getGroupList() {
-        return groupRepository.findAll();
+
+    public List<GroupListResponse> getGroupList() {
+        List<GroupEntity> groups = groupRepository.findAll();
+
+        return groups.stream()
+                .map(g -> new GroupListResponse(
+                        g.getId(),
+                        g.getName()
+                ))
+                .toList();
     }
 }
