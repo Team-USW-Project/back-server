@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -29,6 +31,10 @@ public class Post extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    //이미지 첨부
+   /* @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private final List<PostImage> images = new ArrayList<>(); */
+
 
     public Post(Long memberId, String title, String content) {
         this.memberId = memberId;
@@ -40,6 +46,10 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+    /* public void addImage(PostImage image) {
+        this.images.add(image);
+    } */
 
 
 }

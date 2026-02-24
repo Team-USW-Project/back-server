@@ -1,13 +1,19 @@
 server:
   port: 8080
+  name: uswproject
   servlet:
     context-path: /api/${api.version}
-    name: uswproject
 
 api:
   version: v1
 
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      location: C:\Users\user\Desktop\usw
+      max-request-size: 30MB
+      max-file-size: 10MB
   config:
     import: optional:file:./.env[.properties]
   datasource:
