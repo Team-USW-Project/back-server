@@ -10,6 +10,8 @@ public record PostDetailResponseDto(
         String content,
         Long memberId,
         LocalDateTime createdAt,
-        LocalDateTime modifiedAt
+        LocalDateTime modifiedAt,
+        long likeCount,
+        long dislikeCount
 ) {
 }
