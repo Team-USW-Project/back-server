@@ -29,14 +29,13 @@ public class PostController {
 
 
     // 게시글 작성
-    @PostMapping(value = "/post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping
     public ResponseEntity<Long> create(
             @RequestHeader("MEMBER-ID") Long memberId,
-            @RequestBody @Valid PostCreateRequestDto request,
-            @RequestPart("images") List<MultipartFile> images) throws IOException {
-                request.setImages(images);
-                Long postId = postService.create(memberId, request);
-                return ResponseEntity.status(HttpStatus.CREATED).body(postId);
+            @RequestBody @Valid PostCreateRequestDto request
+    ) {
+        Long postId = postService.create(memberId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(postId);
     }
 
 
