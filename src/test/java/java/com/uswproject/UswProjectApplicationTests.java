@@ -1,4 +1,4 @@
-package java.com.uswproject;
+package com.uswproject;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
