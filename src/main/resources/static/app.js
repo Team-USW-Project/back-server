@@ -62,7 +62,7 @@ function updateButtons() {
     ui.reset.disabled = !ready || !hasInput;
     ui.recommend.disabled = !ready || locations.length < 2;
     ui.recommend.textContent = loading ? "번화가 주변 장소를 찾고 있어요…" : "번화가 & 장소 추천 →";
-    document.querySelectorAll(".remove-button, .search-result, .area-option").forEach(button => { button.disabled = !ready; });
+    document.querySelectorAll(".remove-button, .search-result, .area-option, .transport-select").forEach(control => { control.disabled = !ready; });
 }
 
 function clearSelection() {
@@ -144,7 +144,7 @@ function confirmLocation() {
     if (!map || loading || searching || !selectedLocation) return;
     if (locations.length >= 20) { showStatus("참가자는 최대 20명까지 확정할 수 있어요.", true); return; }
     // 이름·주소는 화면 표시용이고 위도·경도는 계산용입니다.
-    locations.push({ ...selectedLocation });
+    locations.push({ ...selectedLocation, transportMode: "TRANSIT" });
     selectedAreaId = null;
     clearSelection();
     ui.searchResults.replaceChildren();
@@ -205,6 +205,28 @@ function renderParticipants() {
         coordinate.className = "coordinate";
         coordinate.textContent = location.address || `${location.latitude.toFixed(5)}, ${location.longitude.toFixed(5)}`;
         detail.append(coordinate);
+        const transportLabel = document.createElement("label");
+        transportLabel.className = "transport-label";
+        transportLabel.textContent = "이동수단";
+        const transport = document.createElement("select");
+        transport.className = "transport-select";
+        transport.setAttribute("aria-label", `참가자 ${index + 1} 이동수단`);
+        for (const [value, label] of [["TRANSIT", "대중교통"], ["CAR", "자차"]]) {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = label;
+            transport.append(option);
+        }
+        transport.value = location.transportMode || "TRANSIT";
+        transport.addEventListener("change", () => {
+            if (loading || searching) { transport.value = location.transportMode || "TRANSIT"; return; }
+            // 각 참가자의 선택값을 보관합니다. 현재 직선거리 추천 API에는 아직 보내지 않습니다.
+            location.transportMode = transport.value === "CAR" ? "CAR" : "TRANSIT";
+            transport.value = location.transportMode;
+            showStatus(`참가자 ${index + 1}의 이동수단을 ${location.transportMode === "CAR" ? "자차" : "대중교통"}로 선택했어요. 현재 추천은 직선거리 기준입니다.`);
+        });
+        transportLabel.append(transport);
+        detail.append(transportLabel);
         const remove = document.createElement("button");
         remove.type = "button";
         remove.className = "remove-button";
@@ -398,7 +420,7 @@ ui.demo.addEventListener("click", () => {
     ui.searchResults.replaceChildren();
     ui.searchQuery.value = "";
     ui.searchStatus.textContent = "검색 결과를 선택한 뒤 출발지로 확정하세요.";
-    locations = [{ name: "예시 출발지 1", latitude: 37.501, longitude: 127.019 }, { name: "예시 출발지 2", latitude: 37.509, longitude: 127.039 }];
+    locations = [{ name: "예시 출발지 1", latitude: 37.501, longitude: 127.019, transportMode: "CAR" }, { name: "예시 출발지 2", latitude: 37.509, longitude: 127.039, transportMode: "TRANSIT" }];
     selectedAreaId = null;
     clearResults();
     renderParticipants();
