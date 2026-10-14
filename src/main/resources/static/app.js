@@ -2,6 +2,10 @@
 
 // HTML 요소를 찾아두면 이후 화면 내용을 바꾸거나 버튼 클릭을 연결할 수 있습니다.
 const ui = {
+    routeButton: document.getElementById("route-button"),
+    routeResults: document.getElementById("route-results"),
+    routeList: document.getElementById("route-list"),
+    routeStatus: document.getElementById("route-status"),
     category: document.getElementById("place-category"),
     areaOptions: document.getElementById("area-options"),
     resultsTitle: document.getElementById("results-title"),
@@ -41,6 +45,9 @@ let participantMarkers = [];
 let resultMarkers = [];
 let searchCircle;
 let selectedAreaId = null;
+let routesLoading = false;
+let routeDestination = null;
+let routeLines = [];
 
 function placeLabel() { return ui.category.value === "RESTAURANT" ? "음식점" : "카페"; }
 
@@ -50,7 +57,9 @@ function showStatus(message, error = false) {
 }
 
 function updateButtons() {
-    const ready = Boolean(map) && !loading && !searching;
+    const ready = Boolean(map) && !loading && !searching && !routesLoading;
+    ui.routeButton.disabled = !ready || !routeDestination;
+    ui.routeButton.textContent = routesLoading ? "경로 조회 중…" : "시간 · 경로 보기";
     ui.searchQuery.disabled = !ready;
     ui.searchButton.disabled = !ready;
     ui.searchButton.textContent = searching ? "검색 중" : "검색";
@@ -74,7 +83,7 @@ function clearSelection() {
 }
 
 function previewLocation(place, button) {
-    if (!map || loading || searching) return;
+    if (!map || loading || searching || routesLoading) return;
     clearSelection();
     selectedLocation = place;
     const position = new kakao.maps.LatLng(place.latitude, place.longitude);
@@ -115,7 +124,7 @@ function renderSearchResults(places) {
 
 async function searchLocations(event) {
     event.preventDefault();
-    if (!map || loading || searching) return;
+    if (!map || loading || searching || routesLoading) return;
     const query = ui.searchQuery.value.trim();
     if (!query) { ui.searchStatus.textContent = "장소명 또는 주소를 입력해주세요."; return; }
     searching = true;
@@ -141,7 +150,7 @@ async function searchLocations(event) {
 }
 
 function confirmLocation() {
-    if (!map || loading || searching || !selectedLocation) return;
+    if (!map || loading || searching || routesLoading || !selectedLocation) return;
     if (locations.length >= 20) { showStatus("참가자는 최대 20명까지 확정할 수 있어요.", true); return; }
     // 이름·주소는 화면 표시용이고 위도·경도는 계산용입니다.
     locations.push({ ...selectedLocation, transportMode: "TRANSIT" });
@@ -158,6 +167,8 @@ function confirmLocation() {
 }
 
 function clearResults() {
+    clearRoutes();
+    routeDestination = null;
     resultMarkers.forEach(marker => marker.setMap(null));
     resultMarkers = [];
     if (searchCircle) searchCircle.setMap(null);
@@ -219,11 +230,12 @@ function renderParticipants() {
         }
         transport.value = location.transportMode || "TRANSIT";
         transport.addEventListener("change", () => {
-            if (loading || searching) { transport.value = location.transportMode || "TRANSIT"; return; }
-            // 각 참가자의 선택값을 보관합니다. 현재 직선거리 추천 API에는 아직 보내지 않습니다.
+            if (loading || searching || routesLoading) { transport.value = location.transportMode || "TRANSIT"; return; }
+            // 변경된 이동수단으로 다음 경로 조회를 수행합니다. 이전 경로는 지웁니다.
             location.transportMode = transport.value === "CAR" ? "CAR" : "TRANSIT";
             transport.value = location.transportMode;
-            showStatus(`참가자 ${index + 1}의 이동수단을 ${location.transportMode === "CAR" ? "자차" : "대중교통"}로 선택했어요. 현재 추천은 직선거리 기준입니다.`);
+            clearRoutes();
+            showStatus(`참가자 ${index + 1}의 이동수단을 ${location.transportMode === "CAR" ? "자차" : "대중교통"}로 선택했어요. 번화가 선택 후 시간 · 경로 보기로 확인해주세요.`);
         });
         transportLabel.append(transport);
         detail.append(transportLabel);
@@ -233,7 +245,7 @@ function renderParticipants() {
         remove.textContent = "삭제";
         remove.setAttribute("aria-label", `참가자 ${index + 1} 삭제`);
         remove.addEventListener("click", () => {
-            if (loading || searching) return;
+            if (loading || searching || routesLoading) return;
             locations.splice(index, 1);
             selectedAreaId = null;
             clearResults();
@@ -263,6 +275,7 @@ function selectPlace(index, position) {
 function renderRecommendations(data) {
     clearResults();
     selectedAreaId = data.selectedArea.id;
+    routeDestination = data.selectedArea;
     const center = data.selectedArea.location;
     const midpoint = new kakao.maps.LatLng(center.latitude, center.longitude);
     const label = data.category === "RESTAURANT" ? "음식점" : "카페";
@@ -280,7 +293,7 @@ function renderRecommendations(data) {
         const detail = document.createElement("span");
         detail.textContent = `${area.description} · 참가자 최대 직선거리 ${(area.maxDistanceMeters / 1000).toFixed(1)}km`;
         button.append(title, detail);
-        button.addEventListener("click", () => { if (!loading && !searching) recommendCafes(area.id); });
+        button.addEventListener("click", () => { if (!loading && !searching && !routesLoading) recommendCafes(area.id); });
         row.append(button);
         ui.areaOptions.append(row);
     });
@@ -344,7 +357,7 @@ function safePlaceUrl(value) {
 }
 
 async function recommendCafes(areaId = selectedAreaId) {
-    if (!map || loading || searching || locations.length < 2) return;
+    if (!map || loading || searching || routesLoading || locations.length < 2) return;
     loading = true;
     clearResults();
     updateButtons();
@@ -372,6 +385,99 @@ async function recommendCafes(areaId = selectedAreaId) {
         updateButtons();
     }
 }
+
+
+// 경로는 서버가 반환한 실제 좌표로 그립니다. 참가자마다 색을 구분합니다.
+function clearRoutes() {
+    routeLines.forEach(line => line.setMap(null));
+    routeLines = [];
+    ui.routeList.replaceChildren();
+    ui.routeResults.hidden = true;
+    ui.routeStatus.textContent = "";
+}
+
+function renderRoutes(routes) {
+    const colors = ["#2563eb", "#d97706", "#9333ea", "#db2777", "#059669"];
+    const bounds = new kakao.maps.LatLngBounds();
+    let success = 0;
+    routes.forEach(route => {
+        const index = route.participantIndex;
+        const card = document.createElement("li");
+        card.className = "route-card";
+        const title = document.createElement("strong");
+        title.textContent = "참가자 " + (index + 1) + " · " + (route.transportMode === "CAR" ? "자차" : "대중교통");
+        title.style.color = colors[index % colors.length];
+        const detail = document.createElement("p");
+        card.append(title, detail);
+        if (route.status !== "OK") {
+            detail.textContent = route.message || "경로를 찾지 못했어요. 다시 조회해주세요.";
+            card.classList.add("route-error");
+        } else {
+            success++;
+            const minutes = Math.ceil(route.durationSeconds / 60);
+            const time = minutes >= 60 ? Math.floor(minutes / 60) + "시간 " + (minutes % 60) + "분" : minutes + "분";
+            detail.textContent = "약 " + time + " · " + (route.distanceMeters / 1000).toFixed(1) + "km" +
+                (route.transportMode === "TRANSIT" ? " · 환승 " + route.transfers + "회" : "");
+            const lines = [];
+            route.segments.forEach(segment => {
+                if (segment.points.length < 2) return;
+                const path = segment.points.map(p => new kakao.maps.LatLng(p.latitude, p.longitude));
+                path.forEach(p => bounds.extend(p));
+                const line = new kakao.maps.Polyline({map, path, strokeWeight: 4,
+                    strokeColor: colors[index % colors.length], strokeOpacity: 0.85,
+                    strokeStyle: segment.type === "WALKING" ? "dash" : "solid"});
+                lines.push(line);
+                routeLines.push(line);
+            });
+            const label = document.createElement("label");
+            const toggle = document.createElement("input");
+            toggle.type = "checkbox";
+            toggle.checked = true;
+            toggle.disabled = lines.length === 0;
+            toggle.addEventListener("change", () => lines.forEach(line => line.setMap(toggle.checked ? map : null)));
+            label.append(toggle, document.createTextNode(" 지도 경로 표시"));
+            card.append(label);
+            if (route.message) {
+                const message = document.createElement("p");
+                message.textContent = route.message;
+                card.append(message);
+            }
+        }
+        ui.routeList.append(card);
+    });
+    ui.routeResults.hidden = false;
+    ui.routeStatus.textContent = routeDestination.name + "까지 " + success + "/" + routes.length + "명의 경로를 조회했어요.";
+    if (routeLines.length) map.setBounds(bounds);
+}
+
+async function requestRoutes() {
+    if (!map || loading || searching || routesLoading || !routeDestination) return;
+    clearRoutes();
+    routesLoading = true;
+    updateButtons();
+    ui.routeStatus.textContent = "참가자별 경로를 조회하고 있어요…";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 90000);
+    try {
+        const response = await fetch("./meetings/routes", {
+            method: "POST", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({participants: locations.map(p => ({
+                location: {latitude: p.latitude, longitude: p.longitude}, transportMode: p.transportMode || "TRANSIT"
+            })), destination: routeDestination.location}), signal: controller.signal
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "경로 조회에 실패했어요.");
+        renderRoutes(data);
+    } catch (error) {
+        ui.routeStatus.textContent = error.name === "AbortError" ? "경로 조회가 지연되고 있어요. 다시 시도해주세요." : error.message;
+    } finally {
+        clearTimeout(timeout);
+        routesLoading = false;
+        updateButtons();
+    }
+}
+
+ui.routeButton.addEventListener("click", requestRoutes);
 
 function loadKakaoSdk(key) {
     return new Promise((resolve, reject) => {
@@ -414,7 +520,7 @@ async function initialize() {
 }
 
 ui.demo.addEventListener("click", () => {
-    if (!map || loading || searching) return;
+    if (!map || loading || searching || routesLoading) return;
     if (locations.length && !window.confirm("현재 참가자 위치를 예시 위치 2곳으로 바꿀까요?")) return;
     clearSelection();
     ui.searchResults.replaceChildren();
@@ -428,7 +534,7 @@ ui.demo.addEventListener("click", () => {
     showStatus("예시 위치 2곳을 넣었어요. 번화가 & 장소 추천 버튼을 눌러주세요.");
 });
 ui.reset.addEventListener("click", () => {
-    if (loading || searching) return;
+    if (loading || searching || routesLoading) return;
     clearSelection();
     ui.searchResults.replaceChildren();
     ui.searchQuery.value = "";

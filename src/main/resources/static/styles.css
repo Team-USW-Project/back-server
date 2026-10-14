@@ -99,3 +99,10 @@ h2 { font-size: 16px; margin: 0; }
     .legend { left: 12px; right: 12px; bottom: 16px; flex-wrap: wrap; gap: 8px 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .loader { animation: none; } }
+
+.route-list { list-style: none; padding: 0; }
+.route-card { border: 1px solid #dce7e6; border-radius: 12px; padding: 14px; margin: 10px 0; font-size: 14px; }
+.route-card p { line-height: 1.6; margin: 8px 0; }
+.route-card label { display: flex; gap: 6px; align-items: center; }
+.route-error { color: #a83c32; }
+#route-button { width: 100%; margin-top: 12px; }

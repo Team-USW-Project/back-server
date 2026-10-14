@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(assignableTypes = {MeetingController.class, LocationSearchController.class})
+@RestControllerAdvice(assignableTypes = {MeetingController.class, LocationSearchController.class, TravelRouteController.class})
 public class MeetingExceptionHandler {
 
     @ExceptionHandler(KakaoApiException.class)

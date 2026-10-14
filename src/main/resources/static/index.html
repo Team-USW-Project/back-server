@@ -43,7 +43,7 @@
                 <span id="participant-count" class="badge">0명</span>
             </div>
             <p class="help">검색으로 2~20명의 출발지를 확정하세요.</p>
-            <p class="help">참가자별 자차·대중교통을 선택할 수 있습니다. 현재는 선택값만 보관하며, 추천은 직선거리 기준입니다. 새로고침하면 입력이 초기화됩니다.</p>
+            <p class="help">참가자별 자차·대중교통을 선택하세요. 번화가를 추천받은 뒤 예상 시간과 경로를 확인할 수 있습니다. 새로고침하면 입력이 초기화됩니다.</p>
             <ol id="participants" class="participant-list"></ol>
             <p id="participant-empty" class="empty">아직 선택한 위치가 없어요.</p>
             <div class="secondary-actions">
@@ -64,6 +64,13 @@
             <h2>추천 번화가</h2>
             <p class="help">서울·경기 주요 역세권 중 직선거리 균형으로 선정한 후보 3곳입니다. 다른 후보를 누르면 주변 장소를 다시 찾습니다.</p>
             <ol id="area-options" class="area-options"></ol>
+            <button id="route-button" class="secondary" type="button" disabled>시간 · 경로 보기</button>
+            <p id="route-status" class="help" role="status" aria-live="polite"></p>
+            <section id="route-results" hidden aria-labelledby="route-title">
+                <h2 id="route-title">참가자별 이동 경로</h2>
+                <p class="help">선택한 번화가 중심까지의 예상 시간입니다. 교통 상황에 따라 달라질 수 있습니다. 점선은 도보 구간입니다.</p>
+                <ol id="route-list" class="route-list"></ol>
+            </section>
             <div class="section-heading">
                 <h2 id="results-title">추천 장소</h2>
                 <span id="cafe-count" class="badge"></span>
@@ -73,7 +80,7 @@
             <ol id="places" class="place-list"></ol>
         </section>
 
-        <p class="footnote">역세권 번화가 후보의 대략적인 중심 좌표를 사용합니다. 가장 먼 참가자의 직선거리를 우선 줄이고 평균 거리도 고려합니다.<br>실제 대중교통 이동시간·환승·도보 경로는 반영하지 않습니다.</p>
+        <p class="footnote">역세권 번화가 후보의 대략적인 중심 좌표를 사용합니다. 추천 순위는 직선거리 균형 기준이며, 조회한 이동 시간은 순위에 반영하지 않습니다.</p>
     </aside>
 
     <section class="map-section" aria-label="참가자 위치와 추천 카페 지도">
