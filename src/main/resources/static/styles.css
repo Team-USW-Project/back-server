@@ -105,4 +105,9 @@ h2 { font-size: 16px; margin: 0; }
 .route-card p { line-height: 1.6; margin: 8px 0; }
 .route-card label { display: flex; gap: 6px; align-items: center; }
 .route-error { color: #a83c32; }
+.appointment-settings { margin: 16px 0; padding: 14px; border: 1px solid #dce7e6; border-radius: 12px; }
+.appointment-settings label { display: block; margin: 8px 0; }
+#appointment-time { width: 100%; min-width: 0; padding: 10px; border: 1px solid #dce7e6; border-radius: 8px; font: inherit; background: white; }
+#appointment-status.error, .departure-schedule.warning { color: #a83c32; }
+.departure-schedule { padding-top: 8px; border-top: 1px solid #dce7e6; font-weight: 600; }
 #route-button { width: 100%; margin-top: 12px; }

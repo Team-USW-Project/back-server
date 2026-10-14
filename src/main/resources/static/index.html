@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>우리 사이 · 중간지점 찾기</title>
     <link rel="stylesheet" href="./styles.css">
+    <script src="./departure-time.js" defer></script>
     <script src="./app.js" defer></script>
 </head>
 <body>
@@ -55,6 +56,18 @@
                 <option value="CAFE">카페에서 대화</option>
                 <option value="RESTAURANT">음식점에서 식사</option>
             </select>
+            <div class="appointment-settings">
+                <label class="help" for="appointment-time">약속 날짜·시간 (한국 시간)</label>
+                <input id="appointment-time" type="datetime-local" step="60" aria-describedby="appointment-status">
+                <label class="help" for="arrival-buffer">일찍 도착할 여유시간</label>
+                <select id="arrival-buffer" class="category-select">
+                    <option value="0">정각 도착 · 0분</option>
+                    <option value="10" selected>10분 먼저 도착</option>
+                    <option value="20">20분 먼저 도착</option>
+                </select>
+                <p id="appointment-status" class="help" role="status" aria-live="polite">약속시간을 입력하면 경로 조회 후 권장 출발시간을 안내합니다.</p>
+                <p class="help">현재 조회한 이동시간 기준입니다. 미래 교통 상황이나 실제 운행 시간표를 예측하지 않습니다.</p>
+            </div>
             <button id="recommend-button" class="primary" type="button" disabled>번화가 &amp; 장소 추천 <span aria-hidden="true">→</span></button>
         </section>
 

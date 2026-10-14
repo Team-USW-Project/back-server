@@ -2,6 +2,9 @@
 
 // HTML 요소를 찾아두면 이후 화면 내용을 바꾸거나 버튼 클릭을 연결할 수 있습니다.
 const ui = {
+    appointmentTime: document.getElementById("appointment-time"),
+    arrivalBuffer: document.getElementById("arrival-buffer"),
+    appointmentStatus: document.getElementById("appointment-status"),
     routeButton: document.getElementById("route-button"),
     routeResults: document.getElementById("route-results"),
     routeList: document.getElementById("route-list"),
@@ -48,6 +51,7 @@ let selectedAreaId = null;
 let routesLoading = false;
 let routeDestination = null;
 let routeLines = [];
+let departureEntries = [];
 
 function placeLabel() { return ui.category.value === "RESTAURANT" ? "음식점" : "카페"; }
 
@@ -389,6 +393,7 @@ async function recommendCafes(areaId = selectedAreaId) {
 
 // 경로는 서버가 반환한 실제 좌표로 그립니다. 참가자마다 색을 구분합니다.
 function clearRoutes() {
+    departureEntries = [];
     routeLines.forEach(line => line.setMap(null));
     routeLines = [];
     ui.routeList.replaceChildren();
@@ -443,11 +448,50 @@ function renderRoutes(routes) {
                 card.append(message);
             }
         }
+        const schedule = document.createElement("p");
+        schedule.className = "departure-schedule";
+        card.append(schedule);
+        departureEntries.push({route, schedule});
         ui.routeList.append(card);
     });
     ui.routeResults.hidden = false;
     ui.routeStatus.textContent = routeDestination.name + "까지 " + success + "/" + routes.length + "명의 경로를 조회했어요.";
     if (routeLines.length) map.setBounds(bounds);
+    updateDepartureSchedules();
+}
+
+// 입력을 바꾸면 보관한 이동시간으로 다시 계산합니다. 경로 API는 호출하지 않습니다.
+function updateDepartureSchedules(now = Date.now()) {
+    ui.appointmentTime.min = DepartureSchedule.minimumAppointment(now);
+    const value = ui.appointmentTime.value;
+    const appointment = DepartureSchedule.parseAppointment(value);
+    const invalid = Boolean(value) && (appointment === null || appointment <= now);
+    const buffer = Number(ui.arrivalBuffer.value);
+    ui.appointmentTime.setAttribute("aria-invalid", String(invalid));
+    ui.appointmentStatus.classList.toggle("error", invalid);
+    ui.appointmentStatus.textContent = !value ? "약속시간을 입력하면 경로 조회 후 권장 출발시간을 안내합니다."
+        : invalid ? "현재보다 이후의 약속 날짜·시간을 입력해주세요."
+        : "한국 시간 기준, 약속 " + buffer + "분 전에 도착하도록 계산합니다.";
+    departureEntries.forEach(({route, schedule}) => {
+        schedule.classList.toggle("warning", false);
+        if (route.status !== "OK" || !Number.isFinite(route.durationSeconds) || route.durationSeconds < 0) {
+            schedule.textContent = "출발시간 계산 불가 · 경로를 다시 조회해주세요.";
+            return;
+        }
+        if (!value) { schedule.textContent = "약속 날짜·시간을 입력하면 출발시간을 안내합니다."; return; }
+        const result = DepartureSchedule.calculate(value, route.durationSeconds, buffer, now);
+        if (result.status === "INVALID_TIME" || result.status === "PAST_APPOINTMENT") {
+            schedule.textContent = "현재보다 이후의 약속 날짜·시간을 입력해주세요.";
+            return;
+        }
+        if (result.status === "INVALID_BUFFER") { schedule.textContent = "여유시간을 다시 선택해주세요."; return; }
+        schedule.textContent = "권장 출발: " + DepartureSchedule.formatTime(result.departure) +
+            " · 예상 도착: " + DepartureSchedule.formatTime(result.arrival) + " (한국 시간)";
+        if (result.status === "DEPARTURE_PASSED") {
+            schedule.textContent += " · 권장 출발시간이 지났어요. 지금 출발하면 목표 도착시간보다 늦어질 수 있습니다.";
+            schedule.classList.toggle("warning", true);
+        }
+    });
 }
 
 async function requestRoutes() {
@@ -540,6 +584,9 @@ ui.reset.addEventListener("click", () => {
     ui.searchQuery.value = "";
     ui.searchStatus.textContent = "검색 결과를 선택한 뒤 출발지로 확정하세요.";
     locations = [];
+    ui.appointmentTime.value = "";
+    ui.arrivalBuffer.value = "10";
+    updateDepartureSchedules();
     selectedAreaId = null;
     clearResults();
     renderParticipants();
@@ -553,4 +600,11 @@ ui.category.addEventListener("change", () => {
     showStatus(`${placeLabel()} 검색으로 바꿨어요. 번화가 & 장소 추천 버튼을 눌러주세요.`);
 });
 ui.recommend.addEventListener("click", () => recommendCafes());
+ui.appointmentTime.addEventListener("input", () => updateDepartureSchedules());
+ui.appointmentTime.addEventListener("change", () => updateDepartureSchedules());
+ui.arrivalBuffer.addEventListener("change", () => updateDepartureSchedules());
+window.addEventListener("focus", () => updateDepartureSchedules());
+// 화면을 켜둔 사이 출발시간이 지나면 안내를 갱신합니다.
+setInterval(() => updateDepartureSchedules(), 60000);
+updateDepartureSchedules();
 initialize();
