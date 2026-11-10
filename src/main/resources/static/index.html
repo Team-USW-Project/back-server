@@ -3,109 +3,134 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>우리 사이 · 중간지점 찾기</title>
+    <meta name="theme-color" content="#1767ee">
+    <title>스팟메이트 · 만나기 좋은 중간지점</title>
     <link rel="stylesheet" href="./styles.css">
     <script src="./departure-time.js" defer></script>
     <script src="./app.js" defer></script>
 </head>
 <body>
+<a class="skip-link" href="#search-query">출발지 입력으로 바로가기</a>
 <header class="header">
-    <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">↔</span> 우리 사이</a>
-    <span class="header-note">함께 만나기 좋은 곳을 찾아보세요</span>
+    <a class="brand" href="./" aria-label="스팟메이트 홈">
+        <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 32 40" fill="currentColor"><path d="M16 1C7.7 1 1 7.6 1 15.8 1 27 16 39 16 39s15-12 15-23.2C31 7.6 24.3 1 16 1Zm0 21a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13Z"/></svg></span>
+        <span>스팟메이트<span class="brand-caption">만나기 좋은 중간지점</span></span>
+    </a>
+    <nav class="header-nav" aria-label="주요 메뉴">
+        <a class="active" href="#search-title">중간지점 찾기</a>
+        <a href="#map-title">지도 보기</a>
+        <a href="#usage-guide">이용 안내</a>
+    </nav>
+    <span class="header-note"><span class="online-dot" aria-hidden="true"></span>서울·경기 역세권 추천</span>
 </header>
 <main class="layout">
-    <aside class="panel">
-        <p class="eyebrow">MEET IN THE MIDDLE</p>
-        <h1>우리 어디서<br>만날까요?</h1>
-        <p class="intro">각자의 출발지를 확정하면<br>만나기 좋은 역세권 번화가를 찾아드려요.</p>
+    <aside class="panel" aria-label="모임 장소 찾기">
+        <div class="panel-intro">
+            <p class="eyebrow">MEET IN THE MIDDLE</p>
+            <h1>우리, 어디서 만날까요?</h1>
+            <p class="intro">각자의 출발지에서, 모두에게 좋은 만남의 장소로.</p>
+            <ol class="flow-steps" aria-label="장소 추천 순서">
+                <li><span>1</span>출발지 입력</li><li><span>2</span>번화가 선택</li><li><span>3</span>경로 확인</li>
+            </ol>
+        </div>
 
-        <section class="location-search" aria-labelledby="search-title">
-            <h2 id="search-title">출발지 검색</h2>
+        <section class="location-search surface" aria-labelledby="search-title">
+            <div class="section-heading"><h2 id="search-title"><span class="step-number">01</span> 출발지 검색</h2><span class="section-tag">장소 · 주소</span></div>
             <form id="search-form" class="search-form">
-                <label for="search-query" class="help">장소명 또는 주소</label>
+                <label for="search-query" class="sr-only">장소명 또는 주소</label>
                 <div class="search-input-row">
-                    <input id="search-query" type="search" maxlength="100" placeholder="예: 수원역, 강남역" autocomplete="off" required disabled>
+                    <span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span>
+                    <input id="search-query" type="search" maxlength="100" placeholder="예: 수원역, 강남역, 도로명 주소" autocomplete="off" required disabled>
                     <button id="search-button" type="submit" disabled>검색</button>
                 </div>
             </form>
             <p id="search-status" class="help" role="status" aria-live="polite">검색 결과를 선택한 뒤 출발지로 확정하세요.</p>
             <ol id="search-results" class="search-results"></ol>
             <div id="selected-location" class="selected-location" hidden>
-                <span class="selection-label">확정 전 위치</span>
+                <span class="selection-label">선택한 출발지 · 확정 전</span>
                 <strong id="selected-name"></strong>
                 <p id="selected-address" class="help"></p>
                 <button id="confirm-location" type="button" class="primary" disabled>출발지로 확정</button>
             </div>
         </section>
 
-        <section aria-labelledby="participants-title">
-            <div class="section-heading">
-                <h2 id="participants-title">참가자 위치</h2>
-                <span id="participant-count" class="badge">0명</span>
-            </div>
-            <p class="help">검색으로 2~20명의 출발지를 확정하세요.</p>
-            <p class="help">참가자별 자차·대중교통을 선택하세요. 번화가를 추천받은 뒤 예상 시간과 경로를 확인할 수 있습니다. 새로고침하면 입력이 초기화됩니다.</p>
+        <section class="participants-section surface" aria-labelledby="participants-title">
+            <div class="section-heading"><h2 id="participants-title"><span class="step-number">02</span> 함께 만날 사람들</h2><span id="participant-count" class="badge">0명</span></div>
+            <p class="help">출발지를 2~20개 추가하고 이동수단을 선택하세요.</p>
             <ol id="participants" class="participant-list"></ol>
-            <p id="participant-empty" class="empty">아직 선택한 위치가 없어요.</p>
+            <p id="participant-empty" class="empty"><span class="empty-symbol" aria-hidden="true">＋</span>아직 등록된 출발지가 없어요.<span>위에서 첫 번째 출발지를 검색해보세요.</span></p>
             <div class="secondary-actions">
                 <button id="demo-button" class="secondary" type="button" disabled>예시 위치 넣기</button>
-                <button id="reset-button" class="secondary" type="button" disabled>초기화</button>
+                <button id="reset-button" class="secondary" type="button" disabled>전체 초기화</button>
             </div>
-            <label class="help" for="place-category">모임 목적</label>
+        </section>
+
+        <section class="meeting-settings surface" aria-labelledby="meeting-title">
+            <div class="section-heading"><h2 id="meeting-title"><span class="step-number">03</span> 어떤 만남인가요?</h2><span class="section-tag">모임 설정</span></div>
+            <label class="field-label" for="place-category">모임 목적</label>
             <select id="place-category" class="category-select" disabled>
                 <option value="CAFE">카페에서 대화</option>
                 <option value="RESTAURANT">음식점에서 식사</option>
             </select>
-            <div class="appointment-settings">
-                <label class="help" for="appointment-time">약속 날짜·시간 (한국 시간)</label>
-                <input id="appointment-time" type="datetime-local" step="60" aria-describedby="appointment-status">
-                <label class="help" for="arrival-buffer">일찍 도착할 여유시간</label>
-                <select id="arrival-buffer" class="category-select">
-                    <option value="0">정각 도착 · 0분</option>
-                    <option value="10" selected>10분 먼저 도착</option>
-                    <option value="20">20분 먼저 도착</option>
-                </select>
-                <p id="appointment-status" class="help" role="status" aria-live="polite">약속시간을 입력하면 경로 조회 후 권장 출발시간을 안내합니다.</p>
-                <p class="help">현재 조회한 이동시간 기준입니다. 미래 교통 상황이나 실제 운행 시간표를 예측하지 않습니다.</p>
-            </div>
-            <button id="recommend-button" class="primary" type="button" disabled>번화가 &amp; 장소 추천 <span aria-hidden="true">→</span></button>
+            <details class="appointment-settings">
+                <summary>약속시간 · 출발시간 설정 <span class="optional-label">선택</span></summary>
+                <div class="appointment-content">
+                    <label class="field-label" for="appointment-time">약속 날짜·시간 <span class="muted">한국 시간</span></label>
+                    <input id="appointment-time" type="datetime-local" step="60" aria-describedby="appointment-status">
+                    <label class="field-label" for="arrival-buffer">일찍 도착할 여유시간</label>
+                    <select id="arrival-buffer" class="category-select">
+                        <option value="0">정각 도착 · 0분</option>
+                        <option value="10" selected>10분 먼저 도착</option>
+                        <option value="20">20분 먼저 도착</option>
+                    </select>
+                    <p id="appointment-status" class="help" role="status" aria-live="polite">약속시간을 입력하면 경로 조회 후 권장 출발시간을 안내합니다.</p>
+                    <p class="help">현재 조회한 이동시간 기준이며, 미래 교통 상황이나 실제 운행 시간표를 예측하지 않습니다.</p>
+                </div>
+            </details>
+            <button id="recommend-button" class="primary recommend-button" type="button" disabled>번화가 &amp; 장소 추천 →</button>
+            <p class="button-caption">모두에게 가까운 역세권 번화가를 찾아드려요.</p>
         </section>
 
         <p id="status" class="status" role="status" aria-live="polite">지도를 준비하고 있어요…</p>
 
-        <section id="results" hidden aria-labelledby="results-title">
-            <h2>추천 번화가</h2>
-            <p class="help">서울·경기 주요 역세권 중 직선거리 균형으로 선정한 후보 3곳입니다. 다른 후보를 누르면 주변 장소를 다시 찾습니다.</p>
+        <section id="results" class="results-section" hidden aria-labelledby="results-title">
+            <div class="result-section-title"><p class="eyebrow">YOUR MEETING SPOT</p><h2>만나기 좋은 번화가</h2><p class="help">서울·경기 주요 역세권 중 거리 균형을 고려한 후보예요.<br>원하는 번화가를 선택하면 주변 장소를 다시 찾습니다.</p></div>
             <ol id="area-options" class="area-options"></ol>
-            <button id="route-button" class="secondary" type="button" disabled>시간 · 경로 보기</button>
-            <p id="route-status" class="help" role="status" aria-live="polite"></p>
-            <section id="route-results" hidden aria-labelledby="route-title">
+            <div class="route-actions surface">
+                <div><strong>여기까지, 얼마나 걸릴까요?</strong><p class="help">참가자별 시간과 경로를 확인하세요.</p></div>
+                <button id="route-button" class="secondary" type="button" disabled>시간 · 경로 보기</button>
+                <p id="route-status" class="help" role="status" aria-live="polite"></p>
+            </div>
+            <section id="route-results" class="route-results" hidden aria-labelledby="route-title">
                 <h2 id="route-title">참가자별 이동 경로</h2>
-                <p class="help">선택한 번화가 중심까지의 예상 시간입니다. 교통 상황에 따라 달라질 수 있습니다. 점선은 도보 구간입니다.</p>
+                <p class="help">선택한 번화가 중심까지의 예상 시간입니다. 점선은 도보 구간이며 교통 상황에 따라 시간이 달라질 수 있어요.</p>
                 <ol id="route-list" class="route-list"></ol>
             </section>
-            <div class="section-heading">
-                <h2 id="results-title">추천 장소</h2>
-                <span id="cafe-count" class="badge"></span>
-            </div>
+            <div class="place-section-heading section-heading"><h2 id="results-title">주변 추천 장소</h2><span id="cafe-count" class="badge"></span></div>
             <p id="midpoint-info" class="help"></p>
             <p id="place-search-info" class="help"></p>
             <ol id="places" class="place-list"></ol>
         </section>
 
-        <p class="footnote">역세권 번화가 후보의 대략적인 중심 좌표를 사용합니다. 추천 순위는 직선거리 균형 기준이며, 조회한 이동 시간은 순위에 반영하지 않습니다.</p>
+        <details id="usage-guide" class="usage-guide">
+            <summary>처음 이용하시나요? 이용 안내</summary>
+            <ol><li>장소명이나 주소로 참가자의 출발지를 확정하세요.</li><li>이동수단과 모임 목적을 정하고 번화가를 추천받으세요.</li><li>번화가 후보와 주변 장소를 둘러보고 이동 경로를 확인하세요.</li></ol>
+            <p>약속시간을 입력하면 권장 출발시간도 확인할 수 있어요. 새로고침하면 입력 내용이 초기화됩니다.</p>
+        </details>
+        <p class="footnote">추천 순위는 주요 역세권 중심까지의 직선거리 균형 기준입니다. 조회한 이동시간은 추천 순위에 반영하지 않습니다.</p>
     </aside>
 
-    <section class="map-section" aria-label="참가자 위치와 추천 카페 지도">
-        <div id="map"></div>
-        <div id="map-placeholder" class="map-placeholder"><span class="loader" aria-hidden="true"></span><p id="map-placeholder-text">카카오 지도를 불러오는 중입니다.</p></div>
-        <div class="map-hint">검색 결과를 확인하고 출발지로 확정하세요</div>
-        <div class="legend" aria-label="지도 표시 안내">
-            <span><i class="dot participant-dot"></i>참가자</span>
-            <span><i class="dot midpoint-dot"></i>추천 번화가</span>
-            <span><i class="dot cafe-dot"></i>추천 장소</span>
-            <span><i class="dot preview-dot"></i>확정 전</span>
+    <section class="map-section" aria-labelledby="map-title">
+        <div class="map-toolbar"><div><span class="live-badge">MAP</span><h2 id="map-title">지도에서 함께 살펴보기</h2></div><button id="map-fit-button" class="map-fit-button" type="button" disabled>출발지 모아보기</button></div>
+        <div class="map-canvas">
+            <div id="map"></div>
+            <div id="map-placeholder" class="map-placeholder"><span class="loader" aria-hidden="true"></span><p id="map-placeholder-text">카카오 지도를 불러오는 중입니다.</p></div>
+            <div class="map-hint"><span class="hint-dot" aria-hidden="true"></span>출발지를 검색하면 지도에 표시됩니다</div>
+            <div class="legend" aria-label="지도 표시 안내">
+                <span><i class="dot participant-dot"></i>참가자</span><span><i class="dot midpoint-dot"></i>추천 번화가</span><span><i class="dot cafe-dot"></i>주변 장소</span><span><i class="dot preview-dot"></i>선택한 출발지</span>
+            </div>
         </div>
+        <div class="map-footer"><span>서로 다른 출발지, 함께하는 도착지.</span><span>지도 데이터 © Kakao</span></div>
     </section>
 </main>
 </body>

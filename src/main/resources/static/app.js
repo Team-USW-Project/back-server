@@ -2,6 +2,7 @@
 
 // HTML 요소를 찾아두면 이후 화면 내용을 바꾸거나 버튼 클릭을 연결할 수 있습니다.
 const ui = {
+    mapFit: document.getElementById("map-fit-button"),
     appointmentTime: document.getElementById("appointment-time"),
     arrivalBuffer: document.getElementById("arrival-buffer"),
     appointmentStatus: document.getElementById("appointment-status"),
@@ -62,6 +63,7 @@ function showStatus(message, error = false) {
 
 function updateButtons() {
     const ready = Boolean(map) && !loading && !searching && !routesLoading;
+    ui.mapFit.disabled = !ready || locations.length === 0;
     ui.routeButton.disabled = !ready || !routeDestination;
     ui.routeButton.textContent = routesLoading ? "경로 조회 중…" : "시간 · 경로 보기";
     ui.searchQuery.disabled = !ready;
@@ -306,8 +308,8 @@ function renderRecommendations(data) {
     locations.forEach(location => bounds.extend(new kakao.maps.LatLng(location.latitude, location.longitude)));
     resultMarkers.push(createMarker(midpoint, data.selectedArea.name, "midpoint", () => map.panTo(midpoint)));
     searchCircle = new kakao.maps.Circle({ map, center: midpoint, radius: data.radiusMeters,
-        strokeWeight: 2, strokeColor: "#13796e", strokeOpacity: 0.5, strokeStyle: "dash",
-        fillColor: "#13796e", fillOpacity: 0.08 });
+        strokeWeight: 2, strokeColor: "#f04f70", strokeOpacity: 0.65, strokeStyle: "dash",
+        fillColor: "#f04f70", fillOpacity: 0.08 });
     ui.midpointInfo.textContent = `선택 지역: ${data.selectedArea.name} · ${data.selectedArea.description}`;
     ui.cafeCount.textContent = `${data.places.length}곳`;
 
@@ -600,6 +602,9 @@ ui.category.addEventListener("change", () => {
     showStatus(`${placeLabel()} 검색으로 바꿨어요. 번화가 & 장소 추천 버튼을 눌러주세요.`);
 });
 ui.recommend.addEventListener("click", () => recommendCafes());
+ui.mapFit.addEventListener("click", () => {
+    if (map && !loading && !searching && !routesLoading && locations.length) fitParticipants();
+});
 ui.appointmentTime.addEventListener("input", () => updateDepartureSchedules());
 ui.appointmentTime.addEventListener("change", () => updateDepartureSchedules());
 ui.arrivalBuffer.addEventListener("change", () => updateDepartureSchedules());
